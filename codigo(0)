@@ -1,0 +1,17 @@
+def indicador_tipo_vela(symbol):
+  """
+  Esta funcion recibe symbol
+  """
+  data = yf.download(symbol, auto_adjust=True)
+  df = data.copy()
+  df["vela"] = np.where(df.Open < df.Close, "Verde",np.where(df.Open == df.Close, "Doji", "Roja"))
+  cantidad_velas = df.groupby(["vela"]).size()
+  return df, cantidad_velas
+
+def devolver_top_ten_variacion(df, n=10, es_de_baja=True):
+  data = df.copy()
+  data["variacion"] = data["Close"].pct_change() * 100
+  data.dropna(inplace=True)
+  data = data.sort_values("variacion", ascending = es_de_baja).head(n)
+    
+  return data
